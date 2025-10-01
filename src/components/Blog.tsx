@@ -1,8 +1,19 @@
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useState } from "react";
 
 const Blog = () => {
+  const [selectedPost, setSelectedPost] = useState<typeof posts[0] | null>(null);
+  
   const posts = [
     {
       title: "Advanced WordPress Custom Functions",
@@ -69,7 +80,7 @@ const Blog = () => {
           {posts.map((post, index) => (
             <Card 
               key={index} 
-              className="transition-smooth hover:scale-105 hover:border-primary group"
+              className="transition-smooth hover:scale-105 hover:border-primary group shadow-[0_0_15px_rgba(168,85,247,0.2)]"
             >
               <CardContent className="p-6">
                 <div className="flex items-center gap-2 text-xs text-primary mb-3">
@@ -101,10 +112,49 @@ const Blog = () => {
                     <span>{post.readTime}</span>
                   </div>
                 </div>
-                <Button variant="ghost" className="w-full group-hover:text-primary">
-                  Read More
-                  <ArrowRight size={16} className="ml-2" />
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" className="w-full group-hover:text-primary" onClick={() => setSelectedPost(post)}>
+                      Read More
+                      <ArrowRight size={16} className="ml-2" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl">{post.title}</DialogTitle>
+                      <DialogDescription className="flex items-center gap-4 text-sm">
+                        <span className="flex items-center gap-1">
+                          <Calendar size={14} />
+                          {post.date}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock size={14} />
+                          {post.readTime}
+                        </span>
+                        <span className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs">
+                          {post.category}
+                        </span>
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="mt-4 space-y-4">
+                      <p className="text-foreground/80 leading-relaxed">{post.excerpt}</p>
+                      <div className="prose prose-invert max-w-none">
+                        <p>This is the full blog post content. In a real application, this would contain the complete article with multiple paragraphs, images, code snippets, and other rich content.</p>
+                        <p>You can add any content here including text, images, videos, code blocks, and more. The dialog will scroll if the content is longer than the viewport.</p>
+                      </div>
+                      <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
+                        {post.tags.map((tag, i) => (
+                          <span
+                            key={i}
+                            className="text-xs px-2 py-1 rounded-full bg-muted text-foreground/60"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
           ))}
